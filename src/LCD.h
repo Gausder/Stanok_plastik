@@ -16,6 +16,9 @@ boolean excycle = false;   // Флаг ввода количества цикл�
 boolean prntcycle = false; // Флаг ввода количества печати в штуках
 boolean prntpause = false; // Флаг ввода количества выдержки
 
+boolean stopna = false;
+boolean stopko = false;
+
 uint8_t sf = 1;    // переменная шага вперед для экструдера
 uint8_t sb = 1;    // переменная шага назад для экструдера
 uint8_t ciex = 0;  // переменная циклов дыижения экструдера
@@ -30,25 +33,25 @@ void Menu() // первый уровень
   lcd.clear();
   lcd.setCursor(8, 0);
   lcd.print("MENU");
-  lcd.setCursor(8, 1);
-  lcd.print("extruder");
-  lcd.setCursor(8, 2);
-  lcd.print("press");
-  lcd.setCursor(8, 3);
-  lcd.print("print");
+  lcd.setCursor(7, 1);
+  lcd.print("Extruder");
+  lcd.setCursor(7, 2);
+  lcd.print("Press");
+  lcd.setCursor(7, 3);
+  lcd.print("Print");
 }
 
 void Extruder() //уровень 1.1
 {
   glubina = 1;
   lcd.clear();
-  lcd.setCursor(6, 0);
+  lcd.setCursor(7, 0);
   lcd.print("EXTRUDER");
-  lcd.setCursor(6, 1);
+  lcd.setCursor(7, 1);
   lcd.print("Forward:");
-  lcd.setCursor(6, 2);
+  lcd.setCursor(7, 2);
   lcd.print("Backward:");
-  lcd.setCursor(6, 3);
+  lcd.setCursor(7, 3);
   lcd.print("Cycle:");
 }
 
@@ -58,11 +61,11 @@ void Press() //уровень 1.2
   lcd.clear();
   lcd.setCursor(8, 0);
   lcd.print("PRESS");
-  lcd.setCursor(6, 1);
+  lcd.setCursor(7, 1);
   lcd.print("Forward");
-  lcd.setCursor(6, 2);
+  lcd.setCursor(7, 2);
   lcd.print("Backward");
-  lcd.setCursor(6, 3);
+  lcd.setCursor(7, 3);
   lcd.print("Motor OFF");
 }
 
@@ -72,11 +75,11 @@ void Prnt() //уровень 1.3
   lcd.clear();
   lcd.setCursor(8, 0);
   lcd.print("PRINT");
-  lcd.setCursor(6, 1);
-  lcd.print("Cycle:");
-  lcd.setCursor(6, 2);
+  lcd.setCursor(7, 1);
+  lcd.print("Kol-vo:");
+  lcd.setCursor(7, 2);
   lcd.print("Pause:");
-  lcd.setCursor(6, 3);
+  lcd.setCursor(7, 3);
   lcd.print("Start");
 }
 
@@ -84,9 +87,9 @@ void Forward() //уровень 1.1.1
 {
   glubina = 1;
   lcd.clear();
-  lcd.setCursor(6, 1);
+  lcd.setCursor(7, 1);
   lcd.print("Forward");
-  lcd.setCursor(8, 2);
+  lcd.setCursor(9, 2);
   lcd.print(sf);
 }
 
@@ -94,9 +97,9 @@ void Backward() //уровень 1.1.2
 {
   glubina = 1;
   lcd.clear();
-  lcd.setCursor(6, 1);
+  lcd.setCursor(7, 1);
   lcd.print("Backward");
-  lcd.setCursor(8, 2);
+  lcd.setCursor(9, 2);
   lcd.print(sb);
 }
 
@@ -104,9 +107,9 @@ void Cycle() //уровень 1.1.2
 {
   glubina = 1;
   lcd.clear();
-  lcd.setCursor(6, 1);
+  lcd.setCursor(7, 1);
   lcd.print("Cycle");
-  lcd.setCursor(8, 2);
+  lcd.setCursor(9, 2);
   lcd.print(ciex);
 }
 
@@ -114,9 +117,9 @@ void Kolichestvo() //уровень 1.3.1
 {
   glubina = 3;
   lcd.clear();
-  lcd.setCursor(6, 1);
+  lcd.setCursor(7, 1);
   lcd.print("Kolichestvo");
-  lcd.setCursor(8, 2);
+  lcd.setCursor(9, 2);
   lcd.print(cipr);
 }
 
@@ -124,9 +127,9 @@ void Viderjka() //уровень 1.3.2
 {
   glubina = 3;
   lcd.clear();
-  lcd.setCursor(6, 1);
+  lcd.setCursor(7, 1);
   lcd.print("Pause");
-  lcd.setCursor(8, 2);
+  lcd.setCursor(9, 2);
   lcd.print(pause);
 }
 
@@ -363,9 +366,9 @@ void proverka()
   {
 
     lcd.clear();
-    lcd.setCursor(4, 2);
+    lcd.setCursor(4, 1);
     lcd.print("Konceviki ne");
-    lcd.setCursor(4, 3);
+    lcd.setCursor(4, 2);
     lcd.print("ustanovleni");
 
     if (stopna == true && stopko == true)

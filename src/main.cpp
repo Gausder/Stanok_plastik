@@ -6,9 +6,6 @@
 #define STOPNA 7 //-----------------концевик начала
 #define STOPKO 8 //-----------------концевик конца
 
-bool stopna = false;
-bool stopko = false;
-
 //------------------создание символов--------------
 byte strelka1[8] = {
     0b00100,
