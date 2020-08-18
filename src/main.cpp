@@ -3,7 +3,7 @@
 #include "LCD.h"
 //#include "PresMotor.h"
 
-#define STOPNA 7 //-----------------концевик начала 
+#define STOPNA 7 //-----------------концевик начала
 #define STOPKO 8 //-----------------концевик конца
 
 //------------------создание символов---------------
@@ -260,19 +260,29 @@ void loop()
     }
   }
 
-
-//-----------Установка концевиков
-  if (STOPNA == 1)
+  //-----------Установка концевиков
+  if (digitalRead(STOPNA) == 0)
   {
-    stopna = true;
+    stopna = false;
+    Serial.println("STOPNA");
     stoppress();
     digitalWrite(ENA0, HIGH);
   }
 
-  if (STOPKO == 1)
+  if (digitalRead(STOPKO) == 0)
   {
-    stopko = true;
+    stopko = false;
+    Serial.println("STOPKO");
     stoppress();
-    forwardpress(200);
+  }
+  if (stopko == false && digitalRead(STOPKO) == 0 && dovodpress == false)
+  {
+    dovodpress = true;
+    forwardpress(100);
+    stoppress();
+  }
+  if (stopko == false && digitalRead(STOPKO) != 0 && dovodpress == true)
+  {
+    dovodpress = false;
   }
 }

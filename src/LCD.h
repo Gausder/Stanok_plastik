@@ -16,8 +16,9 @@ boolean excycle = false;   // Флаг ввода количества цикл�
 boolean prntcycle = false; // Флаг ввода количества печати в штуках
 boolean prntpause = false; // Флаг ввода количества выдержки
 
-boolean stopna = false;
-boolean stopko = false;
+boolean stopna = true;
+boolean stopko = true;
+boolean dovodpress = false;
 
 uint8_t sf = 1;    // переменная шага вперед для экструдера
 uint8_t sb = 1;    // переменная шага назад для экструдера
@@ -371,7 +372,7 @@ void proverka()
     lcd.setCursor(4, 2);
     lcd.print("ustanovleni");
 
-    if (stopna == true && stopko == true)
+    if (stopna == false && stopko == false)
     {
       lcd.clear();
       lcd.setCursor(4, 2);
