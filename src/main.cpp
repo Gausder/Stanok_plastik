@@ -1,10 +1,8 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include "LCD.h"
-//#include "PresMotor.h"
 
-#define STOPNA 7 //-----------------концевик начала
-#define STOPKO 8 //-----------------концевик конца
+
 
 //------------------создание символов---------------
 byte strelka1[8] = {
@@ -285,4 +283,7 @@ void loop()
   {
     dovodpress = false;
   }
+
+
+
 }

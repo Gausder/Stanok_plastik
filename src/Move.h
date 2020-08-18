@@ -8,6 +8,13 @@
 #define DIR1 5
 #define ENA1 4
 
+#define STOPNA 7 //-----------------концевик начала
+#define STOPKO 8 //-----------------концевик конца
+
+boolean stopna = true;
+boolean stopko = true;
+boolean dovodpress = false;
+
 uint32_t tme = 0;
 
 //----------------------------медленно и без возможности остановить
@@ -113,4 +120,57 @@ void stoppress()
   }
   analogWrite(STEP0, 0);
   tme = micros();
+}
+
+void startprint(int cipr, int ciex, int pause)
+{
+  short schob = 0; //счётчик оборотов экструдера
+  uint16_t sch = 0;  // счётчик напечатанного
+  while (sch == cipr)
+  {
+    forwardpressfast(); // поехали пресом вперед до концевика
+    if (digitalRead(STOPKO) == 0)
+    {
+      stopko = false;
+      Serial.println("STOPKO");
+      stoppress();
+    }
+    if (stopko == false && digitalRead(STOPKO) == 0 && dovodpress == false)
+    {
+      dovodpress = true;
+      forwardpress(100);
+      stoppress();
+    }
+    if (stopko == false && digitalRead(STOPKO) != 0 && dovodpress == true)
+    {
+      dovodpress = false;
+    }
+
+    while (schob == (ciex * 800))
+    {
+      forwardextruderfast();
+      schob++;
+    }
+
+    for (uint32_t start = millis(); millis() - start < 2000;) // 2 секунды давим пластик быстро
+    {
+      forwardextruderfast();
+    }
+    forwardpress(1600);   // дожим 2 оборота
+    reverseextruder(800); // ретракт 1 оборот
+
+    for (uint32_t start = millis(); millis() - start < (pause * 1000);) // выдержка в секундах
+    {
+    }
+
+    reversepressfast(); // откат преса до концевика
+    if (digitalRead(STOPNA) == 0)
+    {
+      stopna = false;
+      Serial.println("STOPNA");
+      stoppress();
+      digitalWrite(ENA0, HIGH);
+    }
+    sch++;
+  }
 }

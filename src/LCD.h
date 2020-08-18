@@ -1,5 +1,6 @@
 #include <LiquidCrystal_I2C.h>
 #include "Move.h"
+//#include "PRINTING.h"
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
@@ -16,14 +17,10 @@ boolean excycle = false;   // Флаг ввода количества цикл�
 boolean prntcycle = false; // Флаг ввода количества печати в штуках
 boolean prntpause = false; // Флаг ввода количества выдержки
 
-boolean stopna = true;
-boolean stopko = true;
-boolean dovodpress = false;
-
 uint8_t sf = 1;    // переменная шага вперед для экструдера
 uint8_t sb = 1;    // переменная шага назад для экструдера
 uint8_t ciex = 0;  // переменная циклов дыижения экструдера
-uint8_t cipr = 0;  // переменная количества печати в штуках
+uint16_t cipr = 0; // переменная количества печати в штуках
 uint8_t pause = 0; // переменная количества выдержки
 
 int stp = sf * 800;
@@ -299,36 +296,18 @@ void proverka()
   //-----------------------------------перелистывание третьего пункта--------
   if (glubina == 3 && strelkiLP == 1 && strelkiVN == 0)
   {
-    Serial.print("glub ");
-    Serial.println(glubina);
-    Serial.print("lp ");
-    Serial.println(strelkiLP);
-    Serial.print("vn ");
-    Serial.println(strelkiVN);
     Prnt();
     lcd.setCursor(5, 1);
     lcd.print("-");
   }
   if (glubina == 3 && strelkiLP == 1 && strelkiVN == 1)
   {
-    Serial.print("glub ");
-    Serial.println(glubina);
-    Serial.print("lp ");
-    Serial.println(strelkiLP);
-    Serial.print("vn ");
-    Serial.println(strelkiVN);
     Prnt();
     lcd.setCursor(5, 2);
     lcd.print("-");
   }
   if (glubina == 3 && strelkiLP == 1 && strelkiVN == 2)
   {
-    Serial.print("glub ");
-    Serial.println(glubina);
-    Serial.print("lp ");
-    Serial.println(strelkiLP);
-    Serial.print("vn ");
-    Serial.println(strelkiVN);
     Prnt();
     lcd.setCursor(5, 3);
     lcd.print("-");
@@ -377,6 +356,7 @@ void proverka()
       lcd.clear();
       lcd.setCursor(4, 2);
       lcd.print("Start");
+      startprint(cipr,ciex,pause);
     }
   }
 }
