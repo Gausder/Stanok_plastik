@@ -125,7 +125,7 @@ void stoppress()
 void startprint(int cipr, int ciex, int pause)
 {
   short schob = 0; //счётчик оборотов экструдера
-  uint16_t sch = 0;  // счётчик напечатанного
+  int sch = 0;  // счётчик напечатанного
   while (sch == cipr)
   {
     forwardpressfast(); // поехали пресом вперед до концевика
