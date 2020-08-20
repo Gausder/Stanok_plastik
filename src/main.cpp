@@ -2,7 +2,16 @@
 #include <Wire.h>
 #include "LCD.h"
 
+//-----------------------Отладка-------------------
+#define DEBUG_ENABLE
 
+#ifdef DEBUG_ENABLE
+#define DEBUG(x, y) \
+  Serial.print(x);  \
+  Serial.println(y)
+#else
+#define DEBUG(x, y)
+#endif
 
 //------------------создание символов---------------
 byte strelka1[8] = {
@@ -112,7 +121,9 @@ void setup()
   pinMode(STOPNA, INPUT);
   pinMode(STOPKO, INPUT);
 
+#ifdef DEBUG_ENABLE
   Serial.begin(115200);
+#endif
 
   for (uint32_t start = millis(); millis() - start < 500;)
   {
@@ -137,6 +148,8 @@ void setup()
   lcd.write(byte(3));
   lcd.setCursor(1, 3);
   lcd.write(byte(2));
+
+  DEBUG("Версия от 20.08.20", " ");
 }
 
 void loop()
@@ -262,7 +275,7 @@ void loop()
   if (digitalRead(STOPNA) == 0)
   {
     stopna = false;
-    Serial.println("STOPNA");
+    //DEBUG("Концевик ", "Начало");
     stoppress();
     digitalWrite(ENA0, HIGH);
   }
@@ -270,7 +283,7 @@ void loop()
   if (digitalRead(STOPKO) == 0)
   {
     stopko = false;
-    Serial.println("STOPKO");
+    //DEBUG("Концевик ", "Конец");
     stoppress();
   }
   if (stopko == false && digitalRead(STOPKO) == 0 && dovodpress == false)
@@ -283,7 +296,4 @@ void loop()
   {
     dovodpress = false;
   }
-
-
-
 }
