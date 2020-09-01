@@ -1,3 +1,13 @@
+#define DEBUG_ENABLE
+
+#ifdef DEBUG_ENABLE
+#define DEBUG(x, y) \
+  Serial.print(x);  \
+  Serial.println(y)
+#else
+#define DEBUG(x, y)
+#endif
+
 //-----------------установка движков-------------
 //-----------------Пресс
 #define STEP0 11
@@ -123,7 +133,7 @@ void stoppress()
 }
 
 void startprint(int cipr, int ciex, int pause)
-{
+{ DEBUG("Функция","startprint");
   short schob = 0; //счётчик оборотов экструдера
   int sch = 0;     // счётчик напечатанного
   while (sch == cipr)
@@ -132,7 +142,7 @@ void startprint(int cipr, int ciex, int pause)
     if (digitalRead(STOPKO) == 0)
     {
       stopko = false;
-      Serial.println("STOPKO");
+      DEBUG("", "STOPKO");
       stoppress();
     }
     if (stopko == false && digitalRead(STOPKO) == 0 && dovodpress == false)
@@ -167,7 +177,7 @@ void startprint(int cipr, int ciex, int pause)
     if (digitalRead(STOPNA) == 0)
     {
       stopna = false;
-      Serial.println("STOPNA");
+      DEBUG("","STOPNA");
       stoppress();
       digitalWrite(ENA0, HIGH);
     }

@@ -275,7 +275,7 @@ void loop()
   if (digitalRead(STOPNA) == 0)
   {
     stopna = false;
-    //DEBUG("Концевик ", "Начало");
+    DEBUG("Концевик ", "Начало");
     stoppress();
     digitalWrite(ENA0, HIGH);
   }
@@ -283,7 +283,7 @@ void loop()
   if (digitalRead(STOPKO) == 0)
   {
     stopko = false;
-    //DEBUG("Концевик ", "Конец");
+    DEBUG("Концевик ", "Конец");
     stoppress();
   }
   if (stopko == false && digitalRead(STOPKO) == 0 && dovodpress == false)
