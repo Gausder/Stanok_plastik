@@ -99,7 +99,7 @@ void setup()
   lcd.createChar(6, o2);
   lcd.createChar(7, p1);
   lcd.setCursor(15, 3);
-  lcd.print("V.0.1");
+  lcd.print("V.2.1");
 
   lcd.setCursor(9, 1);
   lcd.write(byte(4));
@@ -149,11 +149,51 @@ void setup()
   lcd.setCursor(1, 3);
   lcd.write(byte(2));
 
-  DEBUG("Версия от 20.08.20", " ");
+  DEBUG("Версия от 03.09.20", " ");
 }
 
 void loop()
 {
+
+#ifdef DEBUG_ENABLE
+  if (Serial.available() > 0)
+  {
+    char io = Serial.read();
+    DEBUG("Прочитано ", io);
+    if (io == 'a') //-----------------------Влево
+    {
+      if (!exfrwrd && !exback && !excycle && !prntcycle && !prntpause)
+      {
+        Vlevo();
+      }
+    }
+    else if (io == 'w') //-----------------------Вверх
+    {
+      if (!exfrwrd && !exback && !excycle && !prntcycle && !prntpause)
+      {
+        Vverh();
+      }
+    }
+    else if (io == 'e') //-----------------------Ввод
+    {
+      Vvod();
+    }
+    else if (io == 's') //-----------------------Вниз
+    {
+      if (!exfrwrd && !exback && !excycle && !prntcycle && !prntpause)
+      {
+        Vniz();
+      }
+    }
+    else if (io == 'd') //-----------------------Вправо
+    {
+      if (!exfrwrd && !exback && !excycle && !prntcycle && !prntpause)
+      {
+        Vpravo();
+      }
+    }
+  }
+#endif
 
   uint16_t sV = analogRead(A0);
 
@@ -173,7 +213,6 @@ void loop()
   }
   else if (sV > 800) //-----------------------Ввод
   {
-
     Vvod();
   }
   else if (sV > 331 && sV < 399) //-----------------------Вниз
@@ -272,28 +311,49 @@ void loop()
   }
 
   //-----------Установка концевиков
+
   if (digitalRead(STOPNA) == 0)
   {
     stopna = false;
+    if (!stpprs)
+    {
+      stoppress();
+      digitalWrite(ENA0, HIGH);
+    }
+
     DEBUG("Концевик ", "Начало");
-    stoppress();
-    digitalWrite(ENA0, HIGH);
   }
 
   if (digitalRead(STOPKO) == 0)
   {
     stopko = false;
+    if (!stpprs)
+    {
+      stoppress();
+    }
     DEBUG("Концевик ", "Конец");
-    stoppress();
   }
+
   if (stopko == false && digitalRead(STOPKO) == 0 && dovodpress == false)
   {
     dovodpress = true;
-    forwardpress(100);
+    reversepress(200);
     stoppress();
   }
   if (stopko == false && digitalRead(STOPKO) != 0 && dovodpress == true)
   {
+    stpprs = false;
     dovodpress = false;
+    DEBUG("СТОП ПРЕС", " активна");
+  }
+  if (stopna == false && digitalRead(STOPNA) == 0 && ostanovpress == false)
+  {
+    ostanovpress = true;
+  }
+  if (stopna == false && digitalRead(STOPNA) != 0 && ostanovpress == true)
+  {
+    stpprs = false;
+    ostanovpress = false;
+    DEBUG("СТОП ПРЕС", " активна");
   }
 }

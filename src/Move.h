@@ -1,3 +1,4 @@
+
 #define DEBUG_ENABLE
 
 #ifdef DEBUG_ENABLE
@@ -24,12 +25,15 @@
 boolean stopna = true;
 boolean stopko = true;
 boolean dovodpress = false;
+boolean ostanovpress = false;
+boolean stpprs = false;
 
 uint32_t tme = 0;
 
 //----------------------------медленно и без возможности остановить
 void forwardpress(int stp)
 {
+  DEBUG("Функция вперед", "ПРЕСС");
   digitalWrite(ENA0, LOW);
   digitalWrite(DIR0, HIGH);
   for (int i = 0; i < stp; i++)
@@ -42,6 +46,7 @@ void forwardpress(int stp)
 
 void reversepress(int stp)
 {
+  DEBUG("Функция назад", "ПРЕСС");
   digitalWrite(ENA0, LOW);
   digitalWrite(DIR0, LOW);
   for (int i = 0; i < stp; i++)
@@ -54,6 +59,7 @@ void reversepress(int stp)
 
 void forwardextruder(int stp)
 {
+  DEBUG("Функция вперед", "ЭКСТРУДЕР");
   digitalWrite(ENA1, LOW);
   digitalWrite(DIR1, HIGH);
   for (int i = 0; i < stp; i++)
@@ -66,6 +72,7 @@ void forwardextruder(int stp)
 
 void reverseextruder(int stp)
 {
+  DEBUG("Функция назад", "Экструдер");
   digitalWrite(ENA1, LOW);
   digitalWrite(DIR1, LOW);
   for (int i = 0; i < stp; i++)
@@ -103,7 +110,7 @@ void forwardpressfast()
 {
   digitalWrite(ENA0, LOW);
   analogWrite(DIR0, 255);
-  for (tme = 0; micros() - tme < 150;)
+  for (tme = 0; micros() - tme < 50;)
   {
   }
   analogWrite(STEP0, 1);
@@ -123,6 +130,7 @@ void reversepressfast()
 
 void stoppress()
 {
+  DEBUG("Функция остановка", "ПРЕСС");
   digitalWrite(ENA0, LOW);
   analogWrite(DIR0, 0);
   for (tme = 0; micros() - tme < 50;)
@@ -130,57 +138,5 @@ void stoppress()
   }
   analogWrite(STEP0, 0);
   tme = micros();
-}
-
-void startprint(int cipr, int ciex, int pause)
-{ DEBUG("Функция","startprint");
-  short schob = 0; //счётчик оборотов экструдера
-  int sch = 0;     // счётчик напечатанного
-  while (sch == cipr)
-  {
-    forwardpressfast(); // поехали пресом вперед до концевика
-    if (digitalRead(STOPKO) == 0)
-    {
-      stopko = false;
-      DEBUG("", "STOPKO");
-      stoppress();
-    }
-    if (stopko == false && digitalRead(STOPKO) == 0 && dovodpress == false)
-    {
-      dovodpress = true;
-      forwardpress(100);
-      stoppress();
-    }
-    if (stopko == false && digitalRead(STOPKO) != 0 && dovodpress == true)
-    {
-      dovodpress = false;
-    }
-
-    while (schob == (ciex * 800))
-    {
-      forwardextruderfast();
-      schob++;
-    }
-
-    for (uint32_t start = millis(); millis() - start < 2000;) // 2 секунды давим пластик быстро
-    {
-      forwardextruderfast();
-    }
-    forwardpress(1600);   // дожим 2 оборота
-    reverseextruder(800); // ретракт 1 оборот
-
-    for (uint32_t start = millis(); millis() - start < (pause * 1000);) // выдержка в секундах
-    {
-    }
-
-    reversepressfast(); // откат преса до концевика
-    if (digitalRead(STOPNA) == 0)
-    {
-      stopna = false;
-      DEBUG("","STOPNA");
-      stoppress();
-      digitalWrite(ENA0, HIGH);
-    }
-    sch++;
-  }
+  stpprs = true;
 }

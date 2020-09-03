@@ -1,6 +1,5 @@
 #include <LiquidCrystal_I2C.h>
 #include "Move.h"
-//#include "PRINTING.h"
 
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
@@ -20,10 +19,93 @@ boolean prntpause = false; // Флаг ввода количества выде�
 uint8_t sf = 1;    // переменная шага вперед для экструдера
 uint8_t sb = 1;    // переменная шага назад для экструдера
 uint8_t ciex = 0;  // переменная циклов дыижения экструдера
-uint16_t cipr = 0; // переменная количества печати в штуках
-uint8_t pause = 0; // переменная количества выдержки
+uint16_t cipr = 1; // переменная количества печати в штуках
+uint8_t pause = 1; // переменная количества выдержки
 
+float vremya = 0;
 int stp = sf * 800;
+
+void startprint(int cipr, int ciex, int pause)
+{
+  DEBUG("startprint печатаем ", cipr);
+
+  short schob = 0; //счётчик оборотов экструдера
+  int sch = 0;     // счётчик напечатанного
+  while (sch < cipr)
+  {
+
+    DEBUG("Погнали", sch);
+
+    stopko = true;
+    stopna = true;
+    DEBUG("Функция назад", "ПРЕСС БЫСТРО");
+    while (digitalRead(STOPKO) != 0)
+    {
+      reversepressfast(); // поехали пресом до концевика
+    }
+
+    if (digitalRead(STOPKO) == 0)
+    {
+      stopko = false;
+      DEBUG("", "STOPKO");
+      reversepress(200);
+      DEBUG("Доехали", " и довели");
+      stoppress();
+    }
+
+    for (uint32_t start = millis(); millis() - start < 1000;)
+  {
+  }
+
+    DEBUG("Давим", "Экструдер один оборот");
+    while (schob <= (ciex * 800))
+    {
+      forwardextruderfast();
+      schob++;
+    }
+    DEBUG("Давим", "Экструдер 2 секунды");
+    for (uint32_t start = millis(); millis() - start < 2000;) // 2 секунды давим пластик быстро
+    {
+      forwardextruderfast();
+    }
+    DEBUG("Давим", "Экструдер дожим 2 оборота");
+    forwardextruder(1600); // дожим 2 оборота
+    DEBUG("Ретракт", "Экструдер 1 оборот");
+    reverseextruder(800); // ретракт 1 оборот
+    DEBUG("Выдержка сек ", pause);
+
+    for (uint32_t start = millis(); (millis() - start) < (pause * 1000);) // выдержка в секундах
+    {
+    }
+    DEBUG("Откат", "прес до концевика");
+    while (digitalRead(STOPNA) != 0)
+    {
+      forwardpressfast(); // откат преса до концевика
+    }
+
+    if (digitalRead(STOPNA) == 0)
+    {
+      stopna = false;
+      stoppress();
+      digitalWrite(ENA0, HIGH);
+    }
+    sch++;
+
+    lcd.clear();
+    lcd.setCursor(5, 0);
+    lcd.print("OTPECHATANO");
+    lcd.setCursor(7, 2);
+    lcd.print(sch);
+  }
+  reversepress(600);
+  DEBUG("Доехали", " и довели");
+  stoppress();
+  vremya = (millis() / 60000.0);
+  lcd.setCursor(9, 3);
+  lcd.print(vremya);
+  lcd.setCursor(4, 3);
+  lcd.print("min:");
+}
 
 void Menu() // первый уровень
 {
@@ -222,10 +304,12 @@ void proverka()
   //-------------------------------------выбор подпунктов 1.1; 1.2; 1.3.-----
   if (glubina == 1 && strelkiLP == 2 && strelkiVN == 0)
   {
+    DEBUG("выбор ", "Forward");
     Forward();
   }
   if (glubina == 1 && strelkiLP == 2 && strelkiVN == 1)
   {
+    DEBUG("выбор ", "Backward");
     Backward();
   }
   if (glubina == 1 && strelkiLP == 2 && strelkiVN == 2)
@@ -356,7 +440,7 @@ void proverka()
       lcd.clear();
       lcd.setCursor(4, 2);
       lcd.print("Start");
-      startprint(cipr,ciex,pause);
+      startprint(cipr, ciex, pause);
     }
   }
 }
